@@ -1,43 +1,190 @@
 import React from "react";
-import { Image, Text } from "react-native";
+import { Dimensions, Image, Text, TouchableOpacity, View } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import HomeScreen from '../screens/HomeScreen'
-import CategoryFilterScreen from '../screens/CategoryFilterScreen'
+import HomeScreen from "../screens/HomeScreen";
+import CategoryFilterScreen from "../screens/CategoryFilterScreen";
+import ProductDetailsScreen from "../screens/ProductDetailsScreen";
+import CartScreen from "../screens/CartScreen";
+import { Ionicons, Foundation } from "@expo/vector-icons";
+import {
+  getFocusedRouteNameFromRoute,
+  useNavigation,
+} from "@react-navigation/native";
 
-const Stack = createStackNavigator()
-function HomeNavigator() {
-    return (
-        <Stack.Navigator>
-            <Stack.Screen
-                name="Home"
-                component={HomeScreen}
-                options={{
-                    headerStyle: { backgroundColor: "#5C3EBC" },
-                    headerTitleAlign: 'center',
-                    headerTitle: () => (
-                        <Image
-                            resizeMode="contain"
-                            style={{ width: 70, height: 30 }}
-                            source={require("../../assets/getirlogo.png")}
-                        />
-                    ),
-                }}
+const { width, height } = Dimensions.get("window");
+
+const Stack = createStackNavigator();
+function MyStack({ navigation, route }) {
+  const tabHiddenRoutes = ["ProductDetails","CartScreen"];
+
+  React.useLayoutEffect(() => {
+    const routeName = getFocusedRouteNameFromRoute(route);
+    console.log("Route Name is ", routeName);
+    if (tabHiddenRoutes.includes(routeName)) {
+      console.log("Kapat ", routeName);
+      navigation.setOptions({ tabBarStyle: { display: "none" } });
+    } else {
+      console.log("Aç ", routeName);
+      navigation.setOptions({ tabBarStyle: { display: "flex" } });
+    }
+  }, [navigation, route]);
+  //const navigation_user = useNavigation();
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          headerStyle: { backgroundColor: "#5C3EBC" },
+          headerTitleAlign: "center",
+          headerTitle: () => (
+            <Image
+              resizeMode="contain"
+              style={{ width: 70, height: 30 }}
+              source={require("../../assets/getirlogo.png")}
             />
-            <Stack.Screen
-                name="CategoryDetails"
-                component={CategoryFilterScreen}
-                options={{
-                    headerTintColor: 'white',
-                    headerBackTitleVisible: false,
-                    headerStyle: { backgroundColor: "#5C3EBC" },
-                    headerTitleAlign: 'center',
-                    headerTitle: () => (
-                        <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'white' }}>Ürünler</Text>
-                    ),
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="CategoryDetails"
+        component={CategoryFilterScreen}
+        options={{
+          headerTintColor: "white",
+          headerBackTitleVisible: false,
+          headerStyle: { backgroundColor: "#5C3EBC" },
+          headerTitleAlign: "center",
+          headerTitle: () => (
+            <Text style={{ fontWeight: "bold", fontSize: 15, color: "white" }}>
+              Ürünler
+            </Text>
+          ),
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("CartScreen")}
+              style={{
+                width: width * 0.22,
+                height: 33,
+                backgroundColor: "white",
+                marginRight: width * 0.03,
+                borderRadius: 9,
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <Image
+                source={require("../../assets/cart.png")}
+                style={{
+                  width: 23,
+                  height: 23,
+                  marginLeft: 6,
                 }}
-            />
-        </Stack.Navigator>
-    )
+              />
+              <View
+                style={{ width: 5, height: 30, backgroundColor: "white" }}
+              />
+              <View
+                style={{
+                  flex: 1,
+                  backgroundColor: "#F3EFFE",
+                  height: 30,
+                  borderTopRightRadius: 10,
+                  borderBottomRightRadius: 10,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    color: "#5D3EBD",
+                    fontWeight: "bold",
+                    fontSize: 12,
+                  }}
+                >
+                  <Text>{"\u20BA"}</Text>
+                  24,00
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="ProductDetails"
+        component={ProductDetailsScreen}
+        options={{
+          headerTintColor: "white",
+          headerBackTitleVisible: false,
+          headerStyle: { backgroundColor: "#5C3EBC" },
+          headerTitleAlign: "center",
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={{ paddingLeft: 12 }}
+            >
+              <Ionicons name="close" size={24} color="white" />
+            </TouchableOpacity>
+          ),
+          headerTitle: () => (
+            <Text style={{ fontWeight: "bold", fontSize: 15, color: "white" }}>
+              Ürün Detayı
+            </Text>
+          ),
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={{ paddingRight: 12 }}
+            >
+              <Foundation name="heart" size={24} color="#32177a" />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="CartScreen"
+        component={CartScreen}
+        options={{
+          headerTintColor: "white",
+          headerBackTitleVisible: false,
+          headerTitleAlign: "center",
+          headerStyle: { backgroundColor: "#5C3EBC" },
+          headerTitle: () => (
+            <Text style={{ color: "white", fontWeight: "bold", fontSize: 15 }}>
+              Sepetim
+            </Text>
+          ),
+          headerLeft: () => (
+            <TouchableOpacity
+              style={{ paddingLeft: 8 }}
+              onPress={() => navigation.goBack()}
+            >
+              <Ionicons
+                style={{ marginLeft: 4 }}
+                name="close"
+                size={24}
+                color={"white"}
+              />
+            </TouchableOpacity>
+          ),
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => clearCart()}
+              style={{ paddingRight: 10 }}
+            >
+              <Ionicons
+                style={{ marginRight: 8 }}
+                name="trash"
+                size={24}
+                color="white"
+              />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+    </Stack.Navigator>
+  );
 }
 
-export default HomeNavigator
+export default function HomeNavigator({ navigation, route }) {
+  return <MyStack navigation={navigation} route={route} />;
+}

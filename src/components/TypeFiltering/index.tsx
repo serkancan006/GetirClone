@@ -14,7 +14,7 @@ const TypeBox = ({ active, item, setCat }: { active: string, item: string, setCa
 function index() {
     const [category, setCategory] = useState("Birlikte İyi Gider")
     return (
-        <ScrollView style={{ width: '100%', backgroundColor: 'white', height: height * 0.072, flexDirection: 'row', paddingVertical: height * 0.014, paddingHorizontal: 12 }} showsHorizontalScrollIndicator={false} bounces={true} horizontal={true}>
+        <ScrollView style={{ width: '100%', backgroundColor: 'white', height: height * 0.072, flexDirection: 'row', paddingVertical: height * 0.014, paddingHorizontal: 12,borderBottomColor:'lightgrey',borderBottomWidth:1 }} showsHorizontalScrollIndicator={false} bounces={true} horizontal={true}>
             {["Birlikte İyi Gider", "Çubuk", "Kutu", "Külah", "Çoklu", "Bar"].map((item) => (
                 <TypeBox setCat={setCategory} item={item} active={category} />
             ))
