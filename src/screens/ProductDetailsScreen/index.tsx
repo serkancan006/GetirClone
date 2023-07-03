@@ -37,7 +37,7 @@ const index = (props) => {
         </Text>
         <DetailProperty />
       </ScrollView>
-      <CardButton />
+      <CardButton product={product} />
     </View>
   );
 };

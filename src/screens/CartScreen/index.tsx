@@ -6,21 +6,47 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import productsGetir from "../../../assets/productsGetir";
 import Cartİtem from "../../components/Cartİtem";
 import ProductItem from "../../components/ProductItem";
+//redux
+import { connect } from "react-redux";
+import { Product } from "../../models";
 
 const { width, height } = Dimensions.get("window");
 
-const index = () => {
+const index = ({
+  cartItems,
+}: {
+  cartItems: { product: Product; quantity: number }[];
+}) => {
+  const [totalPrice, setTotalPrice] = useState<number>(0);
+  
+  const getProductsPrice = () => {
+    let total = 0;
+    cartItems.forEach((item) => {
+      total += item.product.fiyat;
+      setTotalPrice(total);
+    });
+    //cartItems.length ? null : setTotalPrice(0)
+  };
+  React.useEffect(() => {
+    getProductsPrice();
+    return () => {
+      setTotalPrice(0);
+    };
+  }, [cartItems]);
+
   return (
     <View style={{ flex: 1 }}>
       <ScrollView style={{ flex: 1 }}>
         <FlatList
           style={{}}
-          data={productsGetir.slice(0, 3)}
-          renderItem={({ item }) => <Cartİtem product={item} />}
+          data={cartItems}
+          renderItem={({ item }) => (
+            <Cartİtem product={item.product} quantity={item.quantity} />
+          )}
         />
         <Text style={{ padding: 15, fontWeight: "bold", color: "#5D3EBD" }}>
           Önerilen Ürünler
@@ -78,7 +104,7 @@ const index = () => {
         >
           <Text style={{ color: "#5D3EBD", fontWeight: "bold", fontSize: 16 }}>
             <Text>{"\u20BA"}</Text>
-            24,00
+            {totalPrice.toFixed(2)}
           </Text>
         </View>
       </View>
@@ -86,4 +112,11 @@ const index = () => {
   );
 };
 
-export default index;
+const mapStateToProps = (state) => {
+  const { cartItems } = state;
+  return {
+    cartItems: cartItems,
+  };
+};
+
+export default connect(mapStateToProps, null)(index);
