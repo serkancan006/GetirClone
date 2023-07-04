@@ -16,13 +16,9 @@ import { Product } from "../../models";
 
 const { width, height } = Dimensions.get("window");
 
-const index = ({
-  cartItems,
-}: {
-  cartItems: { product: Product; quantity: number }[];
-}) => {
+const index = ({cartItems,route}: {route:any,cartItems: { product: Product; quantity: number }[]}) => {
   const [totalPrice, setTotalPrice] = useState<number>(0);
-  
+  console.log("Zınk route params are ",route.params)
   const getProductsPrice = () => {
     let total = 0;
     cartItems.forEach((item) => {
